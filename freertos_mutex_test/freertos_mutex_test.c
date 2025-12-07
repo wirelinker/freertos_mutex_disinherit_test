@@ -142,7 +142,7 @@ void custom_priority_reset_method2_2( UBaseType_t uxPriority, UBaseType_t uxTopR
 
 void task_test_1(__unused void *params) {
 
-    uint32_t count = 0, core_id = 0xDEADBEE1;
+    uint32_t count = 0, core_id = 0xDEADBEE1, task2_priority_changed = 0;
     UBaseType_t pri = tskIDLE_PRIORITY, pri_base = tskIDLE_PRIORITY;
 
     xSemaphore = xSemaphoreCreateMutex();
@@ -163,9 +163,13 @@ void task_test_1(__unused void *params) {
         // if task2 tried to take mutex, then task1 will inherit the priority from task1.
         if(pri != pri_base)
         {
-            // lower down the task2 priority.
-            vTaskPrioritySet( task2, TASK2_LOWER_PRIORITY );
-
+            if( !task2_priority_changed )
+            {
+                /* lower down the task2 priority.*/
+                vTaskPrioritySet( task2, TASK2_LOWER_PRIORITY );
+                task2_priority_changed = 1;
+                printf("task2 priority set to '2' by task1.\n");
+            }
             /*
              * keep busying, do not go into block state!
              * 
@@ -178,7 +182,6 @@ void task_test_1(__unused void *params) {
                 pri = uxTaskPriorityGet(task1); 
                 pri_base = uxTaskBasePriorityGet(task1);
             }
-
         }
         else
         {
