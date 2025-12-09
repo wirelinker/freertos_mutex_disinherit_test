@@ -18,7 +18,7 @@ if(PICO_CYW43_SUPPORTED)
     )
 endif()
 target_compile_definitions(${TARGET_NAME} PRIVATE
-    configNUMBER_OF_CORES=2
+    configNUMBER_OF_CORES=1
     )
 
 pico_enable_stdio_usb(${TARGET_NAME} 1)
